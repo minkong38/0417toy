@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws9-deploy-blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: blue
+  template:
+    metadata:
+      labels:
+        color: blue
+    spec:
+      containers:
+        - name: aws9ctn-blue
+          image: 211.183.3.100/nginx/aws9:blue
+          volumeMounts:
+          - name: blue-data
+            mountPath: /usr/share/nginx/html
+      volumes:
+        - name: blue-data
+          persistentVolumeClaim:
+            claimName: blue-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws9-svc-shop
+spec:
+  ports:
+  - name: aws9-port-shop
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    color: blue
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws9-deploy-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: green    # (1)Pod 작성시 이 부분(label -> app: web)이 포함되어야 함
+  template:   # 여기에서 부터 Pod 작성
+    metadata:
+      labels:
+        color: green  # 반드시 (1) 과 동일해야 함
+    spec:
+      containers:
+        - name: aws9ctn-green
+          image: 211.183.3.100/nginx/aws9:blue
+          volumeMounts:
+          - name: green-data
+            mountPath: /usr/share/nginx/html
+      volumes:
+        - name: green-data
+          persistentVolumeClaim:
+            claimName: green-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws9-svc-blog
+spec:
+  ports:
+  - name: aws9-port-blog
+    port: 8080       # cluster-ip 의 포트 번호
+    protocol: TCP
+    targetPort: 80    # 컨테이너의 포트
+  selector:
+    color: green    # Pod 의 label 을 지정해 주어야 한다!!!
