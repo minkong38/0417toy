@@ -27,10 +27,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-shop
+  name: aws9-svc-blue
 spec:
   ports:
-  - name: aws9-port-shop
+  - name: aws9-port-blue
     port: 8080
     protocol: TCP
     targetPort: 80
@@ -66,10 +66,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-blog
+  name: aws9-svc-green
 spec:
   ports:
-  - name: aws9-port-blog
+  - name: aws9-port-green
     port: 8080       # cluster-ip 의 포트 번호
     protocol: TCP
     targetPort: 80    # 컨테이너의 포트
