@@ -21,17 +21,17 @@ spec:
       volumes:
         - name: blue-data
           persistentVolumeClaim:
-            claimName: blue-pvc
+            claimName: blue-pvc1
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-blue
+  name: aws9-svc-blue1
 spec:
   ports:
   - name: aws9-port-blue
-    port: 8080
+    port: 8081
     protocol: TCP
     targetPort: 80
   selector:
@@ -61,16 +61,16 @@ spec:
       volumes:
         - name: green-data
           persistentVolumeClaim:
-            claimName: green-pvc
+            claimName: green-pvc1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-green
+  name: aws9-svc-green1
 spec:
   ports:
   - name: aws9-port-green
-    port: 8080       # cluster-ip 의 포트 번호
+    port: 8081       # cluster-ip 의 포트 번호
     protocol: TCP
     targetPort: 80    # 컨테이너의 포트
   selector:
