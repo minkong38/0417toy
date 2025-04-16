@@ -14,13 +14,13 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: aws9-svc-green
+            name: aws9-svc-green1
             port:
               number: 8081
       - path: "/blue(/|$)"
         pathType: Prefix
         backend:
           service:
-            name: aws9-svc-blue
+            name: aws9-svc-blue1
             port:
               number: 8081
