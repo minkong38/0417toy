@@ -1,3 +1,20 @@
+# SHOP Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-svc
+  namespace: aws9d
+spec:
+  selector:
+    app: shop
+  ports:
+    - name: shop
+      protocol: TCP
+      port: 8081
+      targetPort: 80
+
+---
+# SHOP Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,7 +30,7 @@ spec:
       labels:
         app: shop
     spec:
-      nodeName: master            # 테스트용 나중에 지우기
+      nodeName: master
       containers:
         - name: shopctn
           image: shop-test:latest
@@ -24,27 +41,31 @@ spec:
             limits: 
               cpu: "200m"
           volumeMounts:
-          - name: html
-            mountPath: /usr/share/nginx/html
+            - name: html
+              mountPath: /usr/share/nginx/html
       volumes:
         - name: html
           persistentVolumeClaim:
             claimName: shop-pvc
 
 ---
+# BLOG Service
 apiVersion: v1
 kind: Service
 metadata:
   name: blog-svc
   namespace: aws9d
 spec:
-  ports:
-  - name: blog
-    port: 8081
-    protocol: TCP
-    targetPort: 80
   selector:
     app: blog
+  ports:
+    - name: blog
+      protocol: TCP
+      port: 8081
+      targetPort: 80
+
+---
+# BLOG Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -60,6 +81,7 @@ spec:
       labels:
         app: blog
     spec:
+      nodeName: master
       containers:
         - name: blogctn
           image: blog-test:latest
@@ -70,42 +92,31 @@ spec:
             limits: 
               cpu: "200m"
           volumeMounts:
-          - name: html
-            mountPath: /usr/share/nginx/html
+            - name: html
+              mountPath: /usr/share/nginx/html
       volumes:
         - name: html
           persistentVolumeClaim:
             claimName: blog-pvc
 
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: blog-svc
-  namespace: aws9d
-spec:
-  ports:
-  - name: blog
-    port: 8081
-    protocol: TCP
-    targetPort: 80
-  selector:
-    app: blog
-
----
+# NEWS Service
 apiVersion: v1
 kind: Service
 metadata:
   name: news-svc
   namespace: aws9d
 spec:
-  ports:
-  - name: news
-    port: 8081
-    protocol: TCP
-    targetPort: 80
   selector:
     app: news
+  ports:
+    - name: news
+      protocol: TCP
+      port: 8081
+      targetPort: 80
+
+---
+# NEWS Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -121,6 +132,7 @@ spec:
       labels:
         app: news
     spec:
+      nodeName: master
       containers:
         - name: newsctn
           image: news-test:latest
@@ -131,24 +143,9 @@ spec:
             limits: 
               cpu: "200m"
           volumeMounts:
-          - name: html
-            mountPath: /usr/share/nginx/html
+            - name: html
+              mountPath: /usr/share/nginx/html
       volumes:
         - name: html
           persistentVolumeClaim:
             claimName: news-pvc
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: news-svc
-  namespace: aws9d
-spec:
-  ports:
-  - name: news
-    port: 8081
-    protocol: TCP
-    targetPort: 80
-  selector:
-    app: news
