@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: aws9-portal
+  namespace: aws9d
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -10,17 +11,24 @@ spec:
   - host: www.aws9.pri
     http:
       paths:
-      - path: "/green" #www.aws9.pri/shop
+      - path: "/shop" #www.aws9.pri/shop
         pathType: Prefix
         backend:
           service:
-            name: aws9-svc-green1
+            name: shop-svc
             port:
               number: 8081
-      - path: "/blue"
+      - path: "/blog"
         pathType: Prefix
         backend:
           service:
-            name: aws9-svc-blue1
+            name: blog-svc
+            port:
+              number: 8081
+      - path: "/news"
+        pathType: Prefix
+        backend:
+          service:
+            name: news-svc
             port:
               number: 8081

@@ -1,77 +1,154 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aws9-deploy-blue
+  name: shop-deploy
+  namespace: aws9d
 spec:
   replicas: 1
   selector:
     matchLabels:
-      color: blue
+      app: shop
   template:
     metadata:
       labels:
-        color: blue
+        app: shop
     spec:
+      nodeName: master            # 테스트용 나중에 지우기
       containers:
-        - name: aws9ctn-blue
-          image: 211.183.3.100/nginx/aws9:blue
+        - name: shopctn
+          image: shop-test:latest
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: "100m"
+            limits: 
+              cpu: "200m"
           volumeMounts:
-          - name: blue-data
+          - name: html
             mountPath: /usr/share/nginx/html
       volumes:
-        - name: blue-data
+        - name: html
           persistentVolumeClaim:
-            claimName: blue-pvc1
+            claimName: shop-pvc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-blue1
+  name: blog-svc
+  namespace: aws9d
 spec:
   ports:
-  - name: aws9-port-blue
+  - name: blog
     port: 8081
     protocol: TCP
     targetPort: 80
   selector:
-    color: blue
-
----
+    app: blog
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aws9-deploy-green
+  name: blog-deploy
+  namespace: aws9d
 spec:
   replicas: 1
   selector:
     matchLabels:
-      color: green    # (1)Pod 작성시 이 부분(label -> app: web)이 포함되어야 함
-  template:   # 여기에서 부터 Pod 작성
+      app: blog
+  template:
     metadata:
       labels:
-        color: green  # 반드시 (1) 과 동일해야 함
+        app: blog
     spec:
       containers:
-        - name: aws9ctn-green
-          image: 211.183.3.100/nginx/aws9:blue
+        - name: blogctn
+          image: blog-test:latest
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: "100m"
+            limits: 
+              cpu: "200m"
           volumeMounts:
-          - name: green-data
+          - name: html
             mountPath: /usr/share/nginx/html
       volumes:
-        - name: green-data
+        - name: html
           persistentVolumeClaim:
-            claimName: green-pvc1
+            claimName: blog-pvc
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: aws9-svc-green1
+  name: blog-svc
+  namespace: aws9d
 spec:
   ports:
-  - name: aws9-port-green
-    port: 8081       # cluster-ip 의 포트 번호
+  - name: blog
+    port: 8081
     protocol: TCP
-    targetPort: 80    # 컨테이너의 포트
+    targetPort: 80
   selector:
-    color: green    # Pod 의 label 을 지정해 주어야 한다!!!
+    app: blog
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: news-svc
+  namespace: aws9d
+spec:
+  ports:
+  - name: news
+    port: 8081
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: news
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: news-deploy
+  namespace: aws9d
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: news
+  template:
+    metadata:
+      labels:
+        app: news
+    spec:
+      containers:
+        - name: newsctn
+          image: news-test:latest
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: "100m"
+            limits: 
+              cpu: "200m"
+          volumeMounts:
+          - name: html
+            mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          persistentVolumeClaim:
+            claimName: news-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: news-svc
+  namespace: aws9d
+spec:
+  ports:
+  - name: news
+    port: 8081
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: news
